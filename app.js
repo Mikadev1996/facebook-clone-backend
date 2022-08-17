@@ -20,13 +20,12 @@ db.on('error', () => console.error.bind(console, 'MongoDB connection error'));
 
 const app = express();
 
-const corsOptions = {origin: 'https://shielded-hamlet-48088.herokuapp.com'};
+const corsOptions = {origin: ''};
 app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
