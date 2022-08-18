@@ -21,7 +21,7 @@ db.on('error', () => console.error.bind(console, 'MongoDB connection error'));
 const app = express();
 
 const corsOptions = {origin: ''};
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -37,9 +37,11 @@ app.use(helmet());
 
 const userRouter = require('./routes/userRoute');
 const postRouter = require('./routes/postRoute');
+const friendsRouter = require('./routes/friendsRoute');
 
 app.use('/api/user', userRouter);
 app.use('/api/post', postRouter);
+app.use('/api/friends', friendsRouter);
 
 app.use((req, res, next) => {
     res.status(404)

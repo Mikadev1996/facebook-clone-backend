@@ -1,9 +1,8 @@
 const { body, validationResult } = require('express-validator')
-const User = require('../models/user');
+const User = require('../models/userModel');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const Post = require("../models/post");
 
 // Current User
 exports.current_user_get = (req, res, next) => {
@@ -24,6 +23,7 @@ exports.sign_up_post = (req, res, next) => {
             username: req.body.username,
             password: hashedPass,
             date_joined: Date.now(),
+
         }).save((err) => {
             if (err) return next(err);
             res.redirect('/');

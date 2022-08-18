@@ -7,7 +7,6 @@ router.get('/', postController.posts_all_get);
 router.get('/profile', authenticateToken,  postController.user_posts_get);
 router.get('/:id', postController.post_get);
 
-
 // Create Post
 router.post('/create', authenticateToken, postController.post_create);
 // Delete Post

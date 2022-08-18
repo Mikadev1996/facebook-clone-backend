@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken');
-const Post = require('../models/post');
-const Comment = require('../models/comment');
+const Post = require('../models/postModel')
 const { body, validationResult } = require('express-validator');
 const async = require('async');
 
@@ -35,28 +34,19 @@ exports.user_posts_get = (req, res, next) => {
 
 // Get Single Posts
 exports.post_get = (req, res, next) => {
-    async.parallel({
-        post_details(callback) {
-            Post.findById(req.params.id)
-                .populate("user")
-                .sort({timestamp: -1})
-                .exec(callback);
-        },
-        comments(callback) {
-            Comment.find({post: req.params.id})
-                .sort({timestamp: -1})
-                .exec(callback);
-        }
-    }, (err, results) => {
-        if (err) {
-            res.json({error: err});
-            return next(err);
-        }
-        res.json({
-            post: results.post_details,
-            comments: results.comments
+    Post.findById(req.params.id)
+        .populate("user")
+        .sort({timestamp: -1})
+        .exec((err, results) => {
+            if (err) {
+                res.json({error: err});
+                return next(err);
+            }
+            res.json({
+                post: results.post_details,
+                comments: results.comments
+            })
         })
-    })
 }
 
 exports.post_create = (req, res, next) => {
