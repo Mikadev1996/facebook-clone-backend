@@ -35,9 +35,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(compression());
 app.use(helmet());
 
-app.get('/', (req, res, next) => {
-    res.send("hello!");
-})
+const userRouter = require('./routes/userRoute');
+const postRouter = require('./routes/postRoute');
+
+app.use('/api/user', userRouter);
+app.use('/api/post', postRouter);
 
 app.use((req, res, next) => {
     res.status(404)
