@@ -15,7 +15,9 @@ exports.send_request_post = (req, res, next) => {
         function (err, updatedUser) {
             if (err) return res.json({error: err});
             console.log(updatedUser);
+            res.header("Access-Control-Allow-Origin", "http://localhost:3000");
             res.json({user: updatedUser});
+
         }
     )
 }
