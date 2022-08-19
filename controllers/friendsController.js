@@ -6,20 +6,16 @@ const jwt = require('jsonwebtoken');
 exports.send_request_post = (req, res, next) => {
     // jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
     //     if (err) return res.json({error: err, message: "JWT Auth Error"});
-    console.log(req);
-    console.log("-------------------------");
-    console.log(req.body.request_id);
-    User.findByIdAndUpdate(req.body.request_id,
-        {$push: {"friend_requests": 1234}},
-        {"new": true, "upsert": true},
-        function (err, updatedUser) {
-            if (err) return res.json({error: err});
-            console.log(updatedUser);
-            res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-            res.json({user: updatedUser});
-
-        }
-    )
+    const id = req.body.request_id;
+    console.log(`req id 2: ${id}`);
+    User.findByIdAndUpdate("62ffd6dcdc171c4451ef5967",
+        { $push: {friend_requests: "1234"}},
+        {},
+        function (error, updated_user) {
+            if (error) return res.json({error: error, message: "ffs"});
+            console.log("success");
+            res.json({user: updated_user});
+        })
 }
 
 exports.accept_request_post = (req, res, next) => {
