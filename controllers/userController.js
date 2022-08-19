@@ -15,46 +15,71 @@ exports.current_user_get = (req, res, next) => {
 }
 
 // Sign Up
-exports.sign_up_post = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10, (err, hashedPass) => {
-        if (err) return next(err);
+exports.sign_up_post = [
+    body('firstname', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
+    body('surname', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
+    body('username', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
+    body('date_of_birth', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
 
-        const user = new User({
-            username: req.body.username,
-            password: hashedPass,
-            date_joined: Date.now(),
-
-        }).save((err) => {
-            if (err) return next(err);
-            res.redirect('/');
-        })
-    })
-}
-
-// Log In
-exports.log_in_post = function (req, res) {
-    passport.authenticate("local", { session: false }, (err, user) => {
-        if (err || !user) {
-            return res.status(401).json({
-                message: "Incorrect Username or Password",
-                user,
-            });
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.json({error: errors, message: "Form validation error"});
+            return;
         }
 
-        jwt.sign(
-            { _id: user._id, username: user.username },
-            process.env.JWT_KEY,
-            { expiresIn: "10m" },
-            (err, token) => {
-                if (err) return res.status(400).json(err);
-                res.json({
-                    token: token,
-                    user: { _id: user._id, username: user.username },
+        bcrypt.hash(req.body.password, 10, (err, hashedPass) => {
+            if (err) return res.json({error: err, message: "hash error"});
+
+            const user = new User({
+                username: req.body.username,
+                password: hashedPass,
+                date_of_birth: req.body.date_of_birth,
+                date_joined: Date.now(),
+
+            }).save((err) => {
+                if (err) return res.json({error: err, message: "form error"});
+                res.redirect('/');
+            })
+        })
+    }
+]
+
+// Log In
+exports.log_in_post = [
+    body('username', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
+    body('password', 'Password must not be empty.').trim().isLength({min: 1}).escape(),
+
+    function (req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.json({error: errors, message: "Form validation error"});
+            return;
+        }
+
+        passport.authenticate("local", { session: false }, (err, user) => {
+            if (err || !user) {
+                return res.status(401).json({
+                    message: "Incorrect Username or Password",
+                    user,
                 });
             }
-        );
-    })(req, res);
-};
+
+            jwt.sign(
+                { _id: user._id, username: user.username },
+                process.env.JWT_KEY,
+                { expiresIn: "10m" },
+                (err, token) => {
+                    if (err) return res.status(400).json(err);
+                    res.json({
+                        token: token,
+                        user: { _id: user._id, username: user.username },
+                    });
+                }
+            );
+        })(req, res);
+    }
+]
 
 // Log Out
 exports.log_out_post = (req, res, next) => {
