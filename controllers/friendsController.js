@@ -29,15 +29,28 @@ exports.send_request_post = [
                 }
             }, (err, results) => {
                 if (err) return res.json({error: err, message: "Error updating users"});
-                res.json({
-                    updated_requested: results.updated_requested,
-                    updated_sender: results.updated_sender
-                })
+                res.json({message: "Users updated"});
             })
         })
     }
 ]
 
 exports.accept_request_post = (req, res, next) => {
-    res.json("");
+    async.parallel({
+        updated_requested(callback) {
+            User.findByIdAndUpdate(requested_id,
+                {$pull: {friends_requested: sender_id}},
+                {$push: {friends: sender_id}},
+                {}).exec(callback);
+        },
+        updated_sender(callback) {
+            User.findByIdAndUpdate(sender_id,
+                {$pull: {friends_requested: requested_id}},
+                {$push: {friends: sender_id}},
+                {}).exec(callback);
+        }
+    }, (err, results) => {
+        if (err) return res.json({error: err, message: "Error updating users"});
+        res.json({message: "Users updated"})
+    })
 }
