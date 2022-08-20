@@ -34,7 +34,6 @@ exports.send_request_post = [
     }
 ]
 
-
 exports.accept_request_post = [
     body('sender_id', 'ID Must not be empty').trim().isLength({min: 1}).escape(),
 

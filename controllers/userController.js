@@ -16,10 +16,11 @@ exports.current_user_get = (req, res, next) => {
 
 // Sign Up
 exports.sign_up_post = [
-    body('firstname', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
-    body('surname', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
-    body('username', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
-    body('date_of_birth', 'Name must not be empty.').trim().isLength({min: 1}).escape(),
+    body('firstname', 'Firstname must not be empty.').trim().isLength({min: 1}).escape(),
+    body('surname', 'Surname must not be empty.').trim().isLength({min: 1}).escape(),
+    body('username', 'Username must not be empty.').trim().isLength({min: 1}).escape(),
+    body('password', 'Password must not be empty.').trim().isLength({min: 1}).escape(),
+    body('date_of_birth', 'Date of Birth must not be empty.').trim().isLength({min: 1}).escape(),
 
     (req, res, next) => {
         const errors = validationResult(req);
@@ -32,6 +33,8 @@ exports.sign_up_post = [
             if (err) return res.json({error: err, message: "hash error"});
 
             const user = new User({
+                firstname: req.body.firstname,
+                surname: req.body.surname,
                 username: req.body.username,
                 password: hashedPass,
                 date_of_birth: req.body.date_of_birth,
