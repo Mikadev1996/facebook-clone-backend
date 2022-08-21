@@ -60,11 +60,12 @@ exports.log_in_post = [
             return;
         }
 
+        console.log(req.body.username, req.body.password);
+
         passport.authenticate("local", { session: false }, (err, user) => {
             if (err || !user) {
                 return res.status(401).json({
                     message: "Incorrect Username or Password",
-                    user,
                 });
             }
 

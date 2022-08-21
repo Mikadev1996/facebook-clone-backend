@@ -34,6 +34,24 @@ exports.send_request_post = [
     }
 ]
 
+exports.send_test_request_post = (req, res, next) => {
+    async.parallel({
+        updated_requested(callback) {
+            User.findByIdAndUpdate("6302aafaf9f647c63b3bad16",
+                {$push: {friend_requests: "6302aafaf9f647c63b3bad13"}},
+                {}).exec(callback);
+        },
+        updated_sender(callback) {
+            User.findByIdAndUpdate("6302aafaf9f647c63b3bad13",
+                {$push: {friends_requested: "6302aafaf9f647c63b3bad16"}},
+                {}).exec(callback);
+        }
+    }, (err, results) => {
+        if (err) return res.json({error: err, message: "Error updating users"});
+        res.json({message: "Users updated"});
+    })
+}
+
 exports.accept_request_post = [
     body('sender_id', 'ID Must not be empty').trim().isLength({min: 1}).escape(),
 
@@ -82,10 +100,11 @@ exports.get_friends_list = (req, res, next) => {
 
         User.findById(authData._id)
             .select({friends: 1})
-            .populate('user')
-            .exec((err, user_details) => {
-
-            })
+            .populate('user', 'friends')
+            .exec((err, list_friends) => {
+                if (err) return res.json({error: err, message: "Error fetching Data"});
+                res.json({friends_list: list_friends});
+            });
     })
 }
 
@@ -93,6 +112,13 @@ exports.get_requests_lists = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
+        User.findById(authData._id)
+            .select({friend_requests: 1})
+            .populate('user', 'friend_requests')
+            .exec((err, list_friend_requests) => {
+                if (err) return res.json({error: err, message: "Error fetching Data"});
+                res.json({friend_requests: list_friend_requests});
+            });
     })
 }
 
@@ -100,5 +126,12 @@ exports.get_requested_lists = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
+        User.findById(authData._id)
+            .select({friends_requested: 1})
+            .populate('user', 'friends_requested')
+            .exec((err, list_friends_requested) => {
+                if (err) return res.json({error: err, message: "Error fetching Data"});
+                res.json({friends_requested: list_friends_requested});
+            });
     })
 }
