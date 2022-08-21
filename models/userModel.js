@@ -10,9 +10,9 @@ const UserSchema = new Schema({
     date_joined: {type: Date},
     biography: {type: String, default: ""},
     job: {type: String, default: ""},
-    friends: {type: Array, default: []},
-    friend_requests: {type: Array, default: []},
-    friends_requested: {type: Array, default: []}
+    friends: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
+    friend_requests: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
+    friends_requested: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
 })
 
 module.exports = mongoose.model('User', UserSchema);

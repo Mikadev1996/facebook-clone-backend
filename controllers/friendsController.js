@@ -75,3 +75,30 @@ exports.accept_request_post = [
         })
     }
 ]
+
+exports.get_friends_list = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+        User.findById(authData._id)
+            .select({friends: 1})
+            .populate('user')
+            .exec((err, user_details) => {
+
+            })
+    })
+}
+
+exports.get_requests_lists = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+    })
+}
+
+exports.get_requested_lists = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+    })
+}

@@ -6,7 +6,7 @@ const async = require('async');
 // Get All Posts
 exports.posts_all_get = (req, res, next) => {
     Post.find({})
-        .populate("user")
+        .populate("user", 'username')
         .sort({timestamp: -1})
         .exec((err, list_posts) => {
             if (err) return next(err);
