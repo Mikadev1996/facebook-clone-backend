@@ -76,9 +76,10 @@ exports.accept_request_post = [
     }
 ]
 
+
 exports.get_friends_list = (req, res, next) => {
-    // jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
-    //     if (err) return res.json({error: err, message: "JWT Auth Error"});
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
 
         User.findById(authData._id, 'friends')
             .populate('friends', 'firstname surname username')
@@ -86,14 +87,14 @@ exports.get_friends_list = (req, res, next) => {
                 if (err) return res.json({error: err, message: "Error fetching Data"});
                 res.json({user_data: list_friends});
             });
-    // })
+    })
 }
 
 exports.get_requests_lists = (req, res, next) => {
     // jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
     //     if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        User.findById(authData._id, 'friend_requests')
+        User.findById("6302aee90032e8da12bc8f46", 'friend_requests')
             .select({friend_requests: 1})
             .populate('friend_requests', 'firstname surname username')
             .exec((err, list_friend_requests) => {
