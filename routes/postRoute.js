@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const postController = require('../controllers/postController');
+const authenticateToken = require('../authenticateToken');
 
 // Get Posts / Post
 router.get('/', postController.posts_all_get);
@@ -17,16 +18,6 @@ router.get('/:id/update', authenticateToken, postController.post_update_get);
 router.put('/:id/update', authenticateToken, postController.post_update_post);
 
 router.put('/:id/like', postController.update_likes_post);
-
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    if (token == null) return res.sendStatus(401).json({error: "JWT Auth error"});
-    req.token = token.replaceAll('"', '');
-    next();
-}
-
-
 
 module.exports = router;
 

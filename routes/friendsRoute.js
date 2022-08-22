@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const friendsController = require('../controllers/friendsController');
+const authenticateToken = require('../authenticateToken');
 
 router.post('/send', friendsController.send_test_request_post);
 

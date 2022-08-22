@@ -42,7 +42,7 @@ exports.sign_up_post = [
 
             }).save((err) => {
                 if (err) return res.json({error: err, message: "form error"});
-                res.redirect('/');
+                res.redirect('http://localhost:3000/');
             })
         })
     }
@@ -59,8 +59,6 @@ exports.log_in_post = [
             res.json({error: errors, message: "Form validation error"});
             return;
         }
-
-        console.log(req.body.username, req.body.password);
 
         passport.authenticate("local", { session: false }, (err, user) => {
             if (err || !user) {
