@@ -10,10 +10,10 @@ router.get('/', authenticateToken, userController.current_user_get);
 router.post('/sign-up', userController.sign_up_post);
 
 // Sign In User
-router.post('/sign-in', userController.log_in_post);
+router.post('/log-in', userController.log_in_post);
 
 // Sign Out User
-router.post('/sign-out', userController.log_out_post);
+router.post('/log-out', userController.log_out_post);
 
 
 module.exports = router;

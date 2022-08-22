@@ -34,24 +34,6 @@ exports.send_request_post = [
     }
 ]
 
-exports.send_test_request_post = (req, res, next) => {
-    async.parallel({
-        updated_requested(callback) {
-            User.findByIdAndUpdate("6302aafaf9f647c63b3bad16",
-                {$push: {friend_requests: "6302aafaf9f647c63b3bad13"}},
-                {}).exec(callback);
-        },
-        updated_sender(callback) {
-            User.findByIdAndUpdate("6302aafaf9f647c63b3bad13",
-                {$push: {friends_requested: "6302aafaf9f647c63b3bad16"}},
-                {}).exec(callback);
-        }
-    }, (err, results) => {
-        if (err) return res.json({error: err, message: "Error updating users"});
-        res.json({message: "Users updated"});
-    })
-}
-
 exports.accept_request_post = [
     body('sender_id', 'ID Must not be empty').trim().isLength({min: 1}).escape(),
 
