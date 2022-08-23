@@ -6,6 +6,9 @@ const authenticateToken = require('../authenticateToken');
 // Check Current User
 router.get('/', authenticateToken, userController.current_user_get);
 
+
+router.get('/all', authenticateToken, userController.get_users);
+
 // Sign Up User
 router.post('/sign-up', userController.sign_up_post);
 
