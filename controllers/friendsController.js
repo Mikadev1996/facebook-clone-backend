@@ -91,28 +91,28 @@ exports.get_friends_list = (req, res, next) => {
 }
 
 exports.get_requests_lists = (req, res, next) => {
-    // jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
-    //     if (err) return res.json({error: err, message: "JWT Auth Error"});
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        User.findById("6302aee90032e8da12bc8f46", 'friend_requests')
+        User.findById(authData._id, 'friend_requests')
             .select({friend_requests: 1})
             .populate('friend_requests', 'firstname surname username')
             .exec((err, list_friend_requests) => {
                 if (err) return res.json({error: err, message: "Error fetching Data"});
                 res.json({user_data: list_friend_requests});
             });
-    // })
+    })
 }
 
 exports.get_requested_lists = (req, res, next) => {
-    // jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
-    //     if (err) return res.json({error: err, message: "JWT Auth Error"});
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        User.findById("6302aee90032e8da12bc8f46", 'friends_requested')
+        User.findById(authData.id, 'friends_requested')
             .populate('friends_requested', 'firstname surname username')
             .exec((err, list_friends_requested) => {
                 if (err) return res.json({error: err, message: "Error fetching Data"});
                 res.json({user_data: list_friends_requested});
             });
-    // })
+    })
 }
