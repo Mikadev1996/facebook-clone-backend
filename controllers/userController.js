@@ -18,7 +18,7 @@ exports.get_users = (req , res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        User.find({_id: { $nin: authData._id}}, 'firstname surname username')
+        User.find({_id: { $nin: authData._id}} , 'firstname surname username')
             .exec((err, list_users) => {
                 if (err) res.json({error: err, message: "Mongoose Error"});
                 res.json({users: list_users});

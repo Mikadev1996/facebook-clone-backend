@@ -108,8 +108,8 @@ exports.get_requested_lists = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        User.findById(authData.id, 'friends_requested')
-            .populate('friends_requested', 'firstname surname username')
+        User.findById(authData._id, 'friends_requested')
+            // .populate('friends_requested', 'firstname surname username')
             .exec((err, list_friends_requested) => {
                 if (err) return res.json({error: err, message: "Error fetching Data"});
                 res.json({user_data: list_friends_requested});
