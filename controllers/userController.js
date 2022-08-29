@@ -9,7 +9,8 @@ exports.current_user_get = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
         res.json({
-            message: "Token Authenticated"
+            message: "Token Authenticated",
+            user: authData
         })
     })
 }
@@ -80,14 +81,14 @@ exports.log_in_post = [
             }
 
             jwt.sign(
-                { _id: user._id, username: user.username },
+                { _id: user._id, username: user.username , firstname: user.firstname, surname: user.surname },
                 process.env.JWT_KEY,
                 { expiresIn: "10m" },
                 (err, token) => {
                     if (err) return res.status(400).json(err);
                     res.json({
                         token: token,
-                        user: { _id: user._id, username: user.username },
+                        user: { _id: user._id, username: user.username, firstname: user.firstname, surname: user.surname },
                     });
                 }
             );

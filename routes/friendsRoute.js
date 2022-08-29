@@ -7,6 +7,8 @@ router.post('/send', authenticateToken, friendsController.send_request_post);
 
 router.post('/accept', authenticateToken, friendsController.accept_request_post);
 
+router.post('/deny', authenticateToken, friendsController.deny_request_post);
+
 router.get('/', authenticateToken, friendsController.get_friends_list);
 
 router.get('/requests', authenticateToken, friendsController.get_requests_lists);
