@@ -147,3 +147,35 @@ exports.get_requested_lists = (req, res, next) => {
             });
     })
 }
+
+exports.get_filtered_users = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+        async.parallel({
+            user_data(callback) {
+                User.findById(authData._id, 'friends_requested friends')
+                    .exec(callback);
+            },
+            all_users(callback) {
+                User.find({}).exec(callback);
+            }
+        }, (err, result) => {
+            if (err) return res.json({error: err, message: "Find Users error"});
+
+            let friends = result.user_data.friends;
+            friends.push(authData._id); // To filter current user from result
+            const friendsRequested = result.user_data.friends_requested;
+            const users = result.all_users;
+
+            let filteredUsers = users.filter(item => !friendsRequested.includes(item._id));
+            filteredUsers = filteredUsers.filter(item => !friends.includes(item._id));
+            // filteredUsers = filteredUsers.filter( item => item._id === authData._id);
+
+            res.json({
+                friends_data: filteredUsers
+            })
+        })
+    })
+}
+

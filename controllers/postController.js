@@ -77,7 +77,7 @@ exports.post_delete = (req, res, next) => {
 exports.post_like = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) res.json({error: "JWT Authentication Error"});
-        const post_id = req.body._id;
+        const post_id = req.body.post_id;
 
 
         User.findByIdAndUpdate(authData._id, {$push: {likes: post_id}})
