@@ -13,11 +13,9 @@ router.post('/create', authenticateToken, postController.post_create);
 // Delete Post
 router.delete('/:id', authenticateToken, postController.post_delete)
 
-// Update Post (Published/Unpublished)
-router.get('/:id/update', authenticateToken, postController.post_update_get);
-router.put('/:id/update', authenticateToken, postController.post_update_post);
-
-router.put('/:id/like', postController.update_likes_post);
+// Like / Unlike Post
+router.put('/:id/like', postController.post_like);
+router.put('/:id/unlike', postController.post_unlike);
 
 module.exports = router;
 

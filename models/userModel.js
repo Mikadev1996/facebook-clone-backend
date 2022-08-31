@@ -13,6 +13,7 @@ const UserSchema = new Schema({
     friends: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
     friend_requests: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
     friends_requested: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
+    likes: [{type: Schema.Types.ObjectId, ref: 'Post', default: []}]
 })
 
 module.exports = mongoose.model('User', UserSchema);

@@ -15,6 +15,18 @@ exports.current_user_get = (req, res, next) => {
     })
 }
 
+exports.liked_posts = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+        User.findById(authData._id, 'likes')
+            .exec((err, list_liked) => {
+                if (err) return res.json({error: err, message: "Error fetching Data"});
+                res.json({user_data: list_liked});
+            });
+    })
+}
+
 exports.get_users = (req , res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
