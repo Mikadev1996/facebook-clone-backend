@@ -79,23 +79,39 @@ exports.post_like = (req, res, next) => {
         if (err) res.json({error: "JWT Authentication Error"});
         const post_id = req.body.post_id;
 
-
-        User.findByIdAndUpdate(authData._id, {$push: {likes: post_id}})
-        Post.findOneAndUpdate({_id: post_id}, {$inc: {'likes': 1}}, function(err, response) {
-            if (err) return res.json({error: err, message: "Error liking post"});
+        async.parallel({
+            update_user(callback) {
+                User.findByIdAndUpdate(authData._id, {$push: {likes: post_id}})
+                    .exec(callback);
+            },
+            update_post(callback) {
+                Post.findOneAndUpdate({_id: post_id}, {$inc: {'likes': 1}})
+                    .exec(callback);
+            }
+        }, (err, result) => {
+            if (err) return res.json({error: err});
+            res.json("Post Liked");
         })
-        res.json({message: "Post Liked"});
     })
 }
 
 exports.post_unlike = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) res.json({error: "JWT Authentication Error"});
-        const id = req.body._id;
-        User.findByIdAndUpdate(authData._id, {$pull : {likes: post_id}})
-        Post.findOneAndUpdate({_id: id}, {$inc: {'likes': -1}}, function(err, response) {
-            if (err) return res.json({error: err, message: "Error liking post"});
+        const post_id = req.body.post_id;
+
+        async.parallel({
+            update_user(callback) {
+                User.findByIdAndUpdate(authData._id, {$push: {likes: post_id}})
+                    .exec(callback);
+            },
+            update_post(callback) {
+                Post.findOneAndUpdate({_id: post_id}, {$inc: {'likes': -1}})
+                    .exec(callback);
+            }
+        }, (err, result) => {
+            if (err) return res.json({error: err});
+            res.json("Post Liked");
         })
-        res.json({message: "Post Liked"});
     })
 }

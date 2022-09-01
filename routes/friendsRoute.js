@@ -15,6 +15,6 @@ router.get('/requests', authenticateToken, friendsController.get_requests_lists)
 
 router.get('/requested', authenticateToken, friendsController.get_requested_lists);
 
-router.get('/filtered', authenticateToken, friendsController.get_filtered_users);
+router.get('/filtered', authenticateToken, friendsController.get_not_friend_users);
 
 module.exports = router;

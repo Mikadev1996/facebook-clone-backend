@@ -148,10 +148,11 @@ exports.get_requested_lists = (req, res, next) => {
     })
 }
 
-exports.get_filtered_users = (req, res, next) => {
+exports.get_not_friend_users = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
+        res.json({message: "JWT Authenticated"});
         async.parallel({
             user_data(callback) {
                 User.findById(authData._id, 'friends_requested friends')
@@ -170,7 +171,6 @@ exports.get_filtered_users = (req, res, next) => {
 
             let filteredUsers = users.filter(item => !friendsRequested.includes(item._id));
             filteredUsers = filteredUsers.filter(item => !friends.includes(item._id));
-            // filteredUsers = filteredUsers.filter( item => item._id === authData._id);
 
             res.json({
                 friends_data: filteredUsers
