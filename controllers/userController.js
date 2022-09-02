@@ -4,6 +4,19 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+exports.get_user = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+        User.findById(req.params.id, '-password')
+            .exec((err, user_data) => {
+                if (err) return res.json({error: err, message: "Mongoose error"});
+
+                res.json({user_data: user_data});
+            })
+    })
+}
+
 // Current User
 exports.current_user_get = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
