@@ -9,6 +9,7 @@ exports.get_user = (req, res, next) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
         User.findById(req.params.id, '-password')
+            .populate('friends', '-password')
             .exec((err, user_data) => {
                 if (err) return res.json({error: err, message: "Mongoose error"});
 
