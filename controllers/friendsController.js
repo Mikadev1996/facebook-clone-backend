@@ -3,6 +3,19 @@ const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const async = require('async');
 
+exports.get_friends_list = (req, res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+        User.findById(authData._id, 'friends')
+            .populate('friends', 'firstname surname username')
+            .exec((err, list_friends) => {
+                if (err) return res.json({error: err, message: "Error fetching Data"});
+                res.json({user_data: list_friends});
+            });
+    })
+}
+
 exports.send_request_post = [
     body('requested_id', 'ID Must not be empty').trim().isLength({min: 1}).escape(),
     (req, res, next) => {
@@ -108,20 +121,6 @@ exports.deny_request_post = [
     }
 ]
 
-
-exports.get_friends_list = (req, res, next) => {
-    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
-        if (err) return res.json({error: err, message: "JWT Auth Error"});
-
-        User.findById(authData._id, 'friends')
-            .populate('friends', 'firstname surname username')
-            .exec((err, list_friends) => {
-                if (err) return res.json({error: err, message: "Error fetching Data"});
-                res.json({user_data: list_friends});
-            });
-    })
-}
-
 exports.get_requests_lists = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
@@ -148,7 +147,7 @@ exports.get_requested_lists = (req, res, next) => {
     })
 }
 
-exports.get_not_friend_users = (req, res, next) => {
+exports.get_unfriended_users = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 

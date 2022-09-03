@@ -39,7 +39,7 @@ const userRouter = require('./routes/userRoute');
 const postRouter = require('./routes/postRoute');
 const friendsRouter = require('./routes/friendsRoute');
 
-app.use('/api/user', userRouter);
+app.use('/api/users', userRouter);
 app.use('/api/post', postRouter);
 app.use('/api/friends', friendsRouter);
 

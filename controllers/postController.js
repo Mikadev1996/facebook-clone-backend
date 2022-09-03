@@ -17,10 +17,41 @@ exports.posts_all_get = (req, res, next) => {
         })
 }
 
+exports.posts_by_friends = (req , res, next) => {
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+        async.parallel({
+            posts_list(callback) {
+                Post.find({}, '')
+                    .populate('user', '-password')
+                    .sort({timestamp: -1})
+                    .exec(callback)
+            },
+            friends_list(callback) {
+                User.findById(authData._id, 'friends')
+                    .populate('friends', '-password')
+                    .exec(callback)
+            },
+        }, (err, result) => {
+            if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+            const friends = result.friends_list.friends.map(data => data._id);
+            let posts = result.posts_list;
+            posts = posts.filter(item => friends.includes(item.user._id));
+
+            res.json({
+                posts: posts
+            })
+        })
+    })
+}
+
 // Get User Posts
 exports.user_posts_get = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
+
         Post.find({user: authData._id})
             .populate('user', 'username')
             .sort({timestamp: -1})
@@ -31,23 +62,6 @@ exports.user_posts_get = (req, res, next) => {
                 })
             })
     })
-}
-
-// Get Single Posts
-exports.post_get = (req, res, next) => {
-    Post.findById(req.params.id)
-        .populate("user")
-        .sort({timestamp: -1})
-        .exec((err, results) => {
-            if (err) {
-                res.json({error: err});
-                return next(err);
-            }
-            res.json({
-                post: results.post_details,
-                comments: results.comments
-            })
-        })
 }
 
 exports.post_create = (req, res, next) => {
