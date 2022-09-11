@@ -40,7 +40,7 @@ const postRouter = require('./routes/postRoute');
 const friendsRouter = require('./routes/friendsRoute');
 
 app.use('/api/users', userRouter);
-app.use('/api/post', postRouter);
+app.use('/api/posts', postRouter);
 app.use('/api/friends', friendsRouter);
 
 app.use((req, res, next) => {

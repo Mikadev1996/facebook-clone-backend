@@ -5,7 +5,8 @@ const authenticateToken = require('../authenticateToken');
 
 // Get Posts / Post
 router.get('/', postController.posts_all_get);
-router.get('/profile', authenticateToken,  postController.user_posts_get);
+router.get('/friends', authenticateToken, postController.posts_by_friends);
+router.get('/user/:id', authenticateToken,  postController.user_posts_get);
 
 // Create Post
 router.post('/create', authenticateToken, postController.post_create);

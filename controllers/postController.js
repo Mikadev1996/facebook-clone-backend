@@ -26,22 +26,29 @@ exports.posts_by_friends = (req , res, next) => {
                 Post.find({}, '')
                     .populate('user', '-password')
                     .sort({timestamp: -1})
-                    .exec(callback)
+                    .exec(callback);
             },
             friends_list(callback) {
                 User.findById(authData._id, 'friends')
                     .populate('friends', '-password')
-                    .exec(callback)
+                    .exec(callback);
             },
+            likes_list(callback) {
+                User.findById(authData._id, 'likes')
+                    .exec(callback);
+            }
         }, (err, result) => {
             if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-            const friends = result.friends_list.friends.map(data => data._id);
+            const likes = result.likes_list.likes;
+            let friends = result.friends_list.friends.map(data => data._id.toString());
+            friends.push(authData._id)
+
             let posts = result.posts_list;
-            posts = posts.filter(item => friends.includes(item.user._id));
+            posts = posts.filter(item => friends.includes(item.user._id.toString()));
 
             res.json({
-                posts: posts
+                posts: posts,
             })
         })
     })
@@ -52,7 +59,7 @@ exports.user_posts_get = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        Post.find({user: authData._id})
+        Post.find({user: req.params.id})
             .populate('user', 'username')
             .sort({timestamp: -1})
             .exec((err, list_posts) => {
@@ -116,7 +123,7 @@ exports.post_unlike = (req, res, next) => {
 
         async.parallel({
             update_user(callback) {
-                User.findByIdAndUpdate(authData._id, {$push: {likes: post_id}})
+                User.findByIdAndUpdate(authData._id, {$pull: {likes: post_id}})
                     .exec(callback);
             },
             update_post(callback) {
