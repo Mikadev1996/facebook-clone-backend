@@ -47,6 +47,8 @@ exports.posts_by_friends = (req , res, next) => {
             let posts = result.posts_list;
             posts = posts.filter(item => friends.includes(item.user._id.toString()));
 
+            posts = posts.map(item => ({...item._doc, isLiked: likes.includes(item._doc._id.toString())}));
+
             res.json({
                 posts: posts,
             })
