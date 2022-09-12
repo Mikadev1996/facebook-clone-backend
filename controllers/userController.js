@@ -122,6 +122,31 @@ exports.log_in_post = [
     }
 ]
 
+exports.update_biography = [
+    body('date_of_birth', 'Value must not be empty.').trim().isLength({min: 1}).escape(),
+    body('biography', 'Biography must not be empty.').trim().isLength({min: 1}).escape(),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.json({error: errors, message: "Form validation error"});
+            return;
+        }
+
+        jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+            if (err) return res.json({error: err, message: "JWT Auth Error"});
+
+            User.findByIdAndUpdate(authData._id, {
+                biography: req.body.biography,
+                date_of_birth: req.body.date_of_birth,
+            }).exec((err, result) => {
+                if (err) return res.json({error: err});
+                res.json({message: "user updated"});
+            })
+        })
+    }
+]
+
 // Log Out
 exports.log_out_post = (req, res, next) => {
     req.logout((err) => {
