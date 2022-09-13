@@ -151,7 +151,6 @@ exports.get_unfriended_users = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        res.json({message: "JWT Authenticated"});
         async.parallel({
             user_data(callback) {
                 User.findById(authData._id, 'friends_requested friends')
@@ -172,7 +171,7 @@ exports.get_unfriended_users = (req, res, next) => {
             filteredUsers = filteredUsers.filter(item => !friends.includes(item._id));
 
             res.json({
-                friends_data: filteredUsers
+                friends: filteredUsers
             })
         })
     })
