@@ -19,9 +19,9 @@ router.post('/log-in', userController.log_in_post);
 // Sign Out User
 router.post('/log-out', userController.log_out_post);
 
-router.put('/biography', authenticateToken, userController.update_biography);
-
 router.get('/:id', authenticateToken, userController.get_user);
+
+router.put('/:id/biography', authenticateToken, userController.update_biography);
 
 
 module.exports = router;

@@ -136,6 +136,8 @@ exports.update_biography = [
         jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
             if (err) return res.json({error: err, message: "JWT Auth Error"});
 
+            if (req.params.id !== authData._id) return res.json({error: "Invalid user access"});
+
             User.findByIdAndUpdate(authData._id, {
                 biography: req.body.biography,
                 date_of_birth: req.body.date_of_birth,

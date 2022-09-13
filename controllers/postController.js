@@ -61,15 +61,24 @@ exports.user_posts_get = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
 
-        Post.find({user: req.params.id})
-            .populate('user', 'username')
-            .sort({timestamp: -1})
-            .exec((err, list_posts) => {
-                if (err) return next(err);
-                res.json({
-                    posts: list_posts
-                })
-            })
+        async.parallel({
+            posts_list(callback) {
+                Post.find({user: req.params.id})
+                    .populate('user', 'username')
+                    .sort({timestamp: -1})
+                    .exec(callback);
+            },
+            likes_list(callback) {
+                User.findById(authData._id, 'likes')
+                    .exec(callback);
+            }
+        }, (err, result) => {
+            const likes = result.likes_list.likes;
+            let posts = result.posts_list;
+            posts = posts.map(item => ({...item._doc, isLiked: likes.includes(item._doc._id.toString())}));
+
+            res.json({posts: posts,})
+        })
     })
 }
 
