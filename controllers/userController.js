@@ -22,10 +22,14 @@ exports.get_user = (req, res, next) => {
 exports.current_user_get = (req, res, next) => {
     jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
         if (err) return res.json({error: err, message: "JWT Auth Error"});
-        res.json({
-            message: "Token Authenticated",
-            user: authData
-        })
+
+        User.findById(authData._id, '-password')
+            .populate('friends', '-password')
+            .exec((err, user_data) => {
+                if (err) return res.json({error: err, message: "Mongoose error"});
+
+                res.json({user: user_data});
+            })
     })
 }
 
@@ -107,14 +111,14 @@ exports.log_in_post = [
             }
 
             jwt.sign(
-                { _id: user._id, username: user.username , firstname: user.firstname, surname: user.surname },
+                { _id: user._id, username: user.username , firstname: user.firstname, surname: user.surname, friends: user.friends},
                 process.env.JWT_KEY,
-                { expiresIn: "10m" },
+                { expiresIn: "30m" },
                 (err, token) => {
                     if (err) return res.status(400).json(err);
                     res.json({
                         token: token,
-                        user: { _id: user._id, username: user.username, firstname: user.firstname, surname: user.surname },
+                        user: { _id: user._id, username: user.username, firstname: user.firstname, surname: user.surname, friends: user.friends},
                     });
                 }
             );

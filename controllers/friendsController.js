@@ -178,34 +178,29 @@ exports.get_unfriended_users = (req, res, next) => {
     })
 }
 
-exports.remove_friend_post = [
-    body('sender_id', 'ID Must not be empty').trim().isLength({min: 1}).escape(),
-
-    (req, res, next) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            res.json({error: errors, message: "Form validation error"});
-            return;
-        }
-
-        jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
-            if (err) return res.json({error: err, message: "JWT Auth Error"});
-            const sender_id = req.body.sender_id;
-            async.parallel({
-                updated_requested_friends(callback) {
-                    User.findByIdAndUpdate(authData._id,
-                        {$pull: {friends: sender_id}},
-                        {}).exec(callback);
-                },
-                updated_sender_friends(callback) {
-                    User.findByIdAndUpdate(sender_id,
-                        {$pull: {friends: authData._id}},
-                        {}).exec(callback);
-                }
-            }, (err, results) => {
-                if (err) return res.json({error: err, message: "Error updating users"});
-                res.json({message: "Users updated"})
-            })
-        })
+exports.delete_friend_post =  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.json({error: errors, message: "Form validation error"});
+        return;
     }
-]
+
+    jwt.verify(req.token, process.env.JWT_KEY, (err, authData) => {
+        if (err) return res.json({error: err, message: "JWT Auth Error"});
+        async.parallel({
+            updated_requested_friends(callback) {
+                User.findByIdAndUpdate(authData._id,
+                    {$pull: {friends: req.params.id}},
+                    {}).exec(callback);
+            },
+            updated_sender_friends(callback) {
+                User.findByIdAndUpdate(req.params.id,
+                    {$pull: {friends: authData._id}},
+                    {}).exec(callback);
+            }
+        }, (err, results) => {
+            if (err) return res.json({error: err, message: "Error updating users"});
+            res.json({message: "Users updated"})
+        })
+    })
+}

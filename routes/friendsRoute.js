@@ -11,7 +11,7 @@ router.post('/accept', authenticateToken, friendsController.accept_request_post)
 
 router.post('/deny', authenticateToken, friendsController.deny_request_post);
 
-router.post('/remove', authenticateToken, friendsController.remove_friend_post);
+router.put('/delete/:id', authenticateToken, friendsController.delete_friend_post);
 
 router.get('/requests', authenticateToken, friendsController.get_requests_lists);
 
