@@ -85,7 +85,7 @@ exports.sign_up_post = [
 
             }).save((err) => {
                 if (err) return res.json({error: err, message: "form error"});
-                res.redirect('http://localhost:3000/');
+                res.redirect('https://facebook-clone-react.azurewebsites.net/');
             })
         })
     }
@@ -172,7 +172,7 @@ exports.facebook_callback = (req, res, next) => {
             { expiresIn: "30m" },
             (err, token) => {
                 if (err) return res.status(400).json(err);
-                res.redirect(`http://localhost:3000/auth/${token}/${user._id}`);
+                res.redirect(`https://facebook-clone-react.azurewebsites.net/auth/${token}/${user._id}`);
                 // res.json({
                 //     token: token,
                 //     user: { _id: user._id, username: user.username, firstname: user.firstname, surname: user.surname, friends: user.friends, facebookId: user.facebookId},
