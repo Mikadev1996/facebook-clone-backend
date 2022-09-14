@@ -163,3 +163,21 @@ exports.log_out_post = (req, res, next) => {
     })
     res.redirect('/');
 }
+exports.facebook_callback = (req, res, next) => {
+    passport.authenticate("facebook", {session: false}, (err, user, info) => {
+        if (err) return res.json({error: err});
+
+        jwt.sign({ _id: user._id, username: user.username , firstname: user.firstname, surname: user.surname, friends: user.friends, facebookId: user.facebookId},
+            process.env.JWT_KEY,
+            { expiresIn: "30m" },
+            (err, token) => {
+                if (err) return res.status(400).json(err);
+                res.redirect(`http://localhost:3000/auth/${token}/${user._id}`);
+                // res.json({
+                //     token: token,
+                //     user: { _id: user._id, username: user.username, firstname: user.firstname, surname: user.surname, friends: user.friends, facebookId: user.facebookId},
+                // });
+            }
+        );
+    })(req, res, next);
+}

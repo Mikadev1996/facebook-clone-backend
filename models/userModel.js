@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-findorcreate')
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-    firstname: {type: String, required: true},
-    surname: {type: String, required: true},
-    username: {type: String, required: true},
-    password: {type: String, required: true},
+    firstname: {type: String, required: false},
+    surname: {type: String, required: false},
+    username: {type: String, required: false},
+    password: {type: String, required: false},
     date_of_birth: {type: Date},
     date_joined: {type: Date},
     biography: {type: String, default: ""},
@@ -13,7 +14,10 @@ const UserSchema = new Schema({
     friends: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
     friend_requests: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
     friends_requested: [{type: Schema.Types.ObjectId, ref: 'User', default: []}],
-    likes: [{type: Schema.Types.ObjectId, ref: 'Post', default: []}]
+    likes: [{type: Schema.Types.ObjectId, ref: 'Post', default: []}],
+    facebookId: {type: String, required: false},
 })
+
+UserSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model('User', UserSchema);
